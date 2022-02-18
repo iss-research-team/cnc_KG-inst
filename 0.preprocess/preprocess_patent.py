@@ -1,7 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# @Time    : 2022/1/26
+# @Author  : liu yuhan
+# @FileName: preporcess_patent.py
+# @Software: PyCharm
+
 import os
 import xlrd
 import csv
 import json
+from tqdm import tqdm
 
 
 # 0 公开号
@@ -56,6 +64,8 @@ import json
 # 49 领域影响
 # 50 综合专利影响力
 
+
+
 def get_str(str1, str2):
     if str1 != '':
         inf = str1
@@ -85,7 +95,7 @@ def deal(prepare_path, csv_write_path):
         next(csv_read)
         next(csv_read)
         next(csv_read)
-        for inf_list in csv_read:
+        for inf_list in tqdm(csv_read):
             # 信息归拢
             patent_id = inf_list[0]
             # 1.时间的问题时间为空跳过循环
@@ -95,7 +105,14 @@ def deal(prepare_path, csv_write_path):
             time_list = date.split(' | ')
             time = sorted([int(time[:4]) for time in time_list])[0]
             # 其他的信息
-            holder = get_str(inf_list[15], inf_list[16])
+            # 2021.12.27专利权人的部分更新
+            holder = {'inst-dwpi': inf_list[16],
+                      'inst-parent': inf_list[24],
+                      'inst-adv': inf_list[15],
+                      'inst-original': inf_list[20]}
+
+            author = {'author-dwpi': inf_list[25],
+                      'author-original': inf_list[27]}
             holder_code = inf_list[17]
             title = get_str(inf_list[1], inf_list[2])
             # citing_patent = get_str(inf_list[37], inf_list[38])
@@ -110,6 +127,7 @@ def deal(prepare_path, csv_write_path):
             patent_dict[patent_id] = {'time': time,
                                       'title': title,
                                       'institution': holder,
+                                      'author': author,
                                       'institution_code': holder_code,
                                       'citing_patent': citing_patent,
                                       'citing_paper': citing_paper,
