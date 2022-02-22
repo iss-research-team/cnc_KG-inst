@@ -18,11 +18,11 @@ def not_empty(s):
 
 
 def get_institution_list(label):
-    '''
+    """
     把institution提取出来
     :param label:
     :return:
-    '''
+    """
     # 获取专利权人list
     institution_list = []
 
@@ -30,7 +30,7 @@ def get_institution_list(label):
         # 为有人名的机构准备的正则表达式
         pattern = re.compile(r"\[(.*?)\]", re.S)
         # 读文件
-        relationship_dict = json.load(open('../../data/processed_file/relationship_dict_' + label + '.json'
+        relationship_dict = json.load(open('../data/processed_file/relationship_dict_' + label + '.json'
                                            , 'r', encoding='UTF-8'))
         for each_record in relationship_dict:
             if relationship_dict[each_record]['institution']:
@@ -42,16 +42,8 @@ def get_institution_list(label):
                                            institution_list_temper.split(';')]
                 institution_list += institution_list_temper
 
-    elif label == 'patent':
-        # 读文件
-        relationship_dict = json.load(open('../../data/processed_file/relationship_dict_' + label + '.json'
-                                           , 'r', encoding='UTF-8'))
-        for each_record in relationship_dict:
-            institution_list_temper = relationship_dict[each_record]['institution'].split(' | ')
-            institution_list += institution_list_temper
-
     elif label == 'supply':
-        file_path = '../../data/input/supply_chain'
+        file_path = '../data/input/supply_chain'
         file_list = os.listdir(file_path)
         for each_file in file_list:
             institution_list += json.load(open(os.path.join(file_path, each_file)))['nodes']
@@ -63,7 +55,7 @@ def get_institution_list(label):
                     'exhibitor_emo_2019.json': 'translate_name_en'}
 
         for file_name in key_dict:
-            with open('../data/result/' + file_name, 'r', encoding='UTF-8') as file:
+            with open('../data/input/exhibition/' + file_name, 'r', encoding='UTF-8') as file:
                 inf_list = json.load(file)
             key = key_dict[file_name]
             for inf in inf_list:
@@ -74,8 +66,8 @@ def get_institution_list(label):
     institution_list = sorted(list(set(institution_list)))
     institution_list = list(filter(not_empty, institution_list))
     print(label)
-    print('总的专利权人数量：', len(institution_list))
-    json.dump(institution_list, open('../../data/middle_file/institution_list_' + label + '.json',
+    print('num of inst:', len(institution_list))
+    json.dump(institution_list, open('../data/middle_file/2.1.inst_list/inst_list_' + label + '.json',
                                      'w', encoding='UTF-8'))
 
 

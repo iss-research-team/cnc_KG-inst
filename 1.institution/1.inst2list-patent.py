@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2021/12/27 上午9:55
 # @Author  : liu yuhan
-# @FileName: 1.1inst2list-patent.py
+# @FileName: 1.inst2list-patent.py
 # @Software: PyCharm
 
 # 由于专利的特殊性，这里单独对专利进行处理
@@ -262,64 +262,27 @@ class Inst4Patent:
         for index, inst_inf in self.inst_dict.items():
             csv_write.writerow([index] + list(inst_inf['dwpi']) + ['  |  '] + list(inst_inf['orig']))
 
-    # for inst, orig in self.inst_dict.items():
-    #     if len(orig) > 1:
-    #         print(inst, orig)
+    def index_save_stage1(self):
+        """
+        暂时先这样~
+        :return:
+        """
 
-    #     # 2. 去除母公司
-    #
-    #     # 需要判断一下有多少是不一样的inst_p，inst_a
-    #     if inst_a != inst_p:
-    #         # 这是一个坑
-    #         continue
-    #     # 当前公司，母公司，原始都只有一个
-    #     if ' | ' in inst_p:
-    #         continue
-    #     if inst_p in inst_list_clean_1 and len(inst_list_clean_1) > 1:
-    #         inst_list_clean_1.remove(inst_p)
-    #
-    #     if len(inst_list_clean_1) != len(inst_list_clean_2):
-    #         count += 1
-    #         print('dwpi', inst_list_clean_1)
-    #         print(inst_inf)
-    #         print(author_inf)
-    #         print('orig', inst_list_clean_2)
-    # print(count)
-    # # 这里要找的是一一对应的关系，并将其加入字典
-    # # 标准化-母公司-原始
-    # if len(inst_list_clean) == 1:
-    #
-    # print(inst_inf)
-    # print(inst_list)
-    # print(inst_list_clean)
-    # if inst_inf['inst-standard'] and inst_inf['inst-standard'] in inst_dict:
-    #     continue
-    # if ' | ' in inst_inf['inst-standard']:
-    #     continue
-    # inst = inst_inf['inst-standard']
-    # if inst_inf['inst-adv'] != inst_inf['inst-parent']:
-    #     continue
-    # inst_parent = inst_inf['inst-adv']
-    # inst_orig = inst_inf['inst-original']
-    # inst_dict[inst] = {'orig': inst_orig,
-    #                    'parent': inst_parent, }
+        inst_list = []
+        for index, inst_inf in self.inst_dict.items():
+            inst_list += [inst.replace(' --dwpi', '', -1) for inst in list(inst_inf['dwpi'])]
+        for inst_list_temper, _ in self.rest_collect:
+            inst_list += [inst.replace(' --dwpi', '', -1) for inst in inst_list_temper]
 
-    # print(inst_dict)
-    # print(len(inst_dict))
-    # # 去重 + 排序
-    # institution_list = sorted(list(set(institution_list)))
-    # # 去空
-    # institution_list = list(filter(not_empty, institution_list))
-    # print(label)
-    # print('总的专利权人数量：', len(institution_list))
-    # json.dump(institution_list, open('../../data/middle_file/institution_list_' + label + '.json',
-    #                                  'w', encoding='UTF-8'))
+        print('num of inst:', len(inst_list))
+        with open(self.save_path_json, 'w', encoding="UTF-8") as file:
+            json.dump(inst_list, file)
 
 
 if __name__ == '__main__':
-    save_path_json = '../data/middle_file/2.1.inst_index/inst_patent.json'
-    save_path_csv = '../data/middle_file/2.1.inst_index/inst_patent.csv'
-    rest_path_csv = '../data/middle_file/2.1.inst_index/inst_rest_patent.csv'
+    save_path_json = '../data/middle_file/2.1.inst_list/inst_list_patent.json'
+    save_path_csv = '../data/middle_file/2.0.inst_index_patent/inst_patent.csv'
+    rest_path_csv = '../data/middle_file/2.0.inst_index_patent/inst_rest_patent.csv'
 
     inst = Inst4Patent(save_path_json, save_path_csv)
     inst.get_inst_first_time()
@@ -327,9 +290,7 @@ if __name__ == '__main__':
     inst.get_inst_third_time()
     inst.get_inst_forth_time()
     inst.rest_output()
-    inst.index_save()
-
-
+    inst.index_save_stage1()
 
 """
 先到这里啦，在这里耽搁的时间是在是太多了
