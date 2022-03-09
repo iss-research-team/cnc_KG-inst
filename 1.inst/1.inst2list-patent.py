@@ -20,7 +20,7 @@ def not_empty(s):
 
 
 class Inst4Patent:
-    def __init__(self, save_path_json, save_path_csv):
+    def __init__(self, node_path_json, link_path_json):
         """
         字典中保存的信息，dwpi的信息和orig的信息
         """
@@ -35,9 +35,11 @@ class Inst4Patent:
 
         # 这个为第三次检索做准备
         self.rest_collect = []
+        self.node_list = []
+        self.link_list = []
 
-        self.save_path_json = save_path_json
-        self.save_path_csv = save_path_csv
+        self.node_path_json = node_path_json
+        self.link_path_json = link_path_json
 
     def name_trans(self, inst_list, tage):
         """
@@ -47,7 +49,7 @@ class Inst4Patent:
         inst_list_trans = []
         for inst in inst_list:
             inst_trans = self.pattern.sub('', inst)
-            inst_list_trans.append(inst_trans.lower() + tage)
+            inst_list_trans.append(inst_trans.lower().strip() + tage)
         return list(set(inst_list_trans))
 
     def sub_author(self, inst_inf, author_inf):
@@ -232,8 +234,13 @@ class Inst4Patent:
             inst_list_common = list(set(inst_dict_clean_1.keys()) & set(inst_dict_clean_2.keys()))
             if inst_list_common:
                 for node in inst_list_common:
-                    self.inst_graph.add_node(inst_dict_clean_1[node])
-                    self.inst_graph.add_node(inst_dict_clean_2[node])
+                    inst_dwpi = inst_dict_clean_1[node]
+                    inst_orig = inst_dict_clean_2[node]
+                    self.inst_graph.add_node(inst_dwpi)
+                    self.inst_graph.add_node(inst_orig)
+                    # 节点分类
+                    self.inst_dwpi_set.add(inst_dict_clean_1[node])
+                    self.inst_graph.add_edge(inst_dwpi, inst_orig)
 
                     inst_list_clean_1.remove(inst_dict_clean_1[node])
                     inst_list_clean_2.remove(inst_dict_clean_2[node])
@@ -247,20 +254,9 @@ class Inst4Patent:
 
     def rest_output(self):
         csv_write = csv.writer(open(rest_path_csv, 'w', encoding='UTF-8', newline=''))
-
-        for _ in self.rest_collect:
-            csv_write.writerow(_[0] + [''] + _[1])
-
-    def index_save(self):
-        """
-        用于保存生成的index_dict
-        :return:
-        """
-        # with open(self.save_path_json, 'w', encoding="UTF-8") as file:
-        #     json.dump(self.inst_dict, file)
-        csv_write = csv.writer(open(self.save_path_csv, 'w', encoding='UTF-8', newline=''))
-        for index, inst_inf in self.inst_dict.items():
-            csv_write.writerow([index] + list(inst_inf['dwpi']) + ['  |  '] + list(inst_inf['orig']))
+        rest_collect = list(set([' | '.join(list_1 + list_2) for list_1, list_2 in self.rest_collect]))
+        for _ in rest_collect:
+            csv_write.writerow(_.split(' | '))
 
     def index_save_stage1(self):
         """
@@ -268,23 +264,39 @@ class Inst4Patent:
         :return:
         """
 
-        inst_list = []
-        for index, inst_inf in self.inst_dict.items():
-            inst_list += [inst.replace(' --dwpi', '', -1) for inst in list(inst_inf['dwpi'])]
-        for inst_list_temper, _ in self.rest_collect:
-            inst_list += [inst.replace(' --dwpi', '', -1) for inst in inst_list_temper]
+        for _, inst_inf in self.inst_dict.items():
+            inst_list_temper = []
+            inst_list_temper += [inst.replace(' --dwpi', '', -1) for inst in list(inst_inf['dwpi'])]
+            inst_list_temper += [inst.replace(' --orig', '', -1) for inst in list(inst_inf['orig'])]
+            for i in range(0, len(inst_list_temper) - 1):
+                for j in range(i + 1, len(inst_list_temper)):
+                    self.link_list.append([inst_list_temper[i], inst_list_temper[j]])
+            self.node_list += inst_list_temper
 
-        print('num of inst:', len(inst_list))
-        with open(self.save_path_json, 'w', encoding="UTF-8") as file:
-            json.dump(inst_list, file)
+        for inst_list_temper, _ in self.rest_collect:
+            inst_list_temper = [inst.replace(' --dwpi', '', -1) for inst in inst_list_temper]
+            if len(inst_list_temper) > 1:
+                for i in range(0, len(inst_list_temper) - 1):
+                    for j in range(i + 1, len(inst_list_temper)):
+                        self.link_list.append([inst_list_temper[i], inst_list_temper[j]])
+
+            self.node_list += inst_list_temper
+
+        self.node_list = sorted(list(set(self.node_list)))
+
+        print('num of inst:', len(self.node_list))
+        with open(self.node_path_json, 'w', encoding="UTF-8") as file:
+            json.dump(self.node_list, file)
+        with open(self.link_path_json, 'w', encoding="UTF-8") as file:
+            json.dump(self.link_list, file)
 
 
 if __name__ == '__main__':
-    save_path_json = '../data/middle_file/2.1.inst_list/inst_list_patent.json'
-    save_path_csv = '../data/middle_file/2.0.inst_index_patent/inst_patent.csv'
+    node_path_json = '../data/middle_file/2.1.inst_list/inst_list_patent.json'
+    link_path_json = '../data/middle_file/2.0.inst_index_patent/combine_list_patent.json'
     rest_path_csv = '../data/middle_file/2.0.inst_index_patent/inst_rest_patent.csv'
 
-    inst = Inst4Patent(save_path_json, save_path_csv)
+    inst = Inst4Patent(node_path_json, link_path_json)
     inst.get_inst_first_time()
     inst.get_inst_second_time()
     inst.get_inst_third_time()
@@ -294,5 +306,10 @@ if __name__ == '__main__':
 
 """
 先到这里啦，在这里耽搁的时间是在是太多了
-继续往前走了
+继续往前走了,
+具体做一些描述，
+这里处理三个结果：
+1.inst_list
+2.combine_list(直接生成link，用于后续构建网络)
+3.rest_list(后续打标签)
 """
