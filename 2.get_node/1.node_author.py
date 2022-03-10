@@ -25,6 +25,9 @@ def get_combine_dict(combine_list):
             combine_dict[inst] = inst_p
     return combine_dict
 
+class Author:
+    def __init__(self):
+
 
 def trans2label(inst_list_temper, inst_trans_dict, inst_label_dict, combine_dict):
     inst_list_temper_trans = []
@@ -65,7 +68,7 @@ def get_author():
     with open('../../data/processed_file/relationship_dict_literature.json', 'r', encoding='utf-8') as file:
         literature_dict = json.load(file)
     # 处理过的机构名，用于替换
-    with open('../../data/middle_file/2.2.institution_trans_dict/institution_trans_dict_literature.json', 'r',
+    with open('../../data/middle_file/2.2.inst_trans_dict/institution_trans_dict_literature.json', 'r',
               encoding='UTF-8') as file:
         inst_trans_dict = json.load(file)
     with open('../../data/middle_file/2.3.combine/combine_list-0709.json', 'r', encoding='UTF-8') as file:

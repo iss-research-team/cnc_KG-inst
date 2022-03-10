@@ -80,8 +80,7 @@ class Inst:
                 # 去除人名
                 inst_list_temper = re.sub(pattern, '', inst_list_temper)
                 # 把第一项提出来
-                inst_list_temper = [inst[:inst.index(',')].strip() for inst in
-                                    inst_list_temper.split(';')]
+                inst_list_temper = [inst[:inst.index(',')].strip() for inst in inst_list_temper.split('; ')]
                 self.inst_list += inst_list_temper
 
     def get_inst_list_supply(self):

@@ -285,6 +285,7 @@ class Inst4Patent:
         self.node_list = sorted(list(set(self.node_list)))
 
         print('num of inst:', len(self.node_list))
+        print('num of link:', len(self.link_list))
         with open(self.node_path_json, 'w', encoding="UTF-8") as file:
             json.dump(self.node_list, file)
         with open(self.link_path_json, 'w', encoding="UTF-8") as file:
