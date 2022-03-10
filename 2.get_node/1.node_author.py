@@ -25,106 +25,103 @@ def get_combine_dict(combine_list):
             combine_dict[inst] = inst_p
     return combine_dict
 
+
 class Author:
-    def __init__(self):
+    """
+    后续还是要把专利的作者考虑进来
+    """
 
+    def __init__(self, index_save_path, link_1_save_path, link_2_save_path):
+        # trans pattern
+        self.pattern = re.compile("[.,']")
+        # 为有人名的机构准备的正则表达式
+        self.pattern_remove_name = re.compile(r"[\[](.*?)[]]", re.S)
+        # 保存
+        self.index_save_path = index_save_path
+        self.link_1_save_path = link_1_save_path
+        self.link_2_save_path = link_2_save_path
 
-def trans2label(inst_list_temper, inst_trans_dict, inst_label_dict, combine_dict):
-    inst_list_temper_trans = []
-    for inst in inst_list_temper:
-        if inst in inst_trans_dict:
-            inst_trans = inst_trans_dict[inst]['+']
-            if inst_trans in inst_label_dict:
-                inst_list_temper_trans.append(inst_label_dict[inst_trans])
+        self.inst2index = dict()
+        self.doc_l2index = dict()
+        self.get_index()
+        # 存储
+        self.author2index = dict()
+        self.inst_author = defaultdict(set)
+        self.doc_author = defaultdict(set)
+
+    def get_index(self):
+        with open('../data/middle_file/2.4.inst_index/inst2index.json', 'r', encoding='UTF-8') as file:
+            self.inst2index = json.load(file)
+        with open('../data/output/node/doc_literature2index.json', 'r', encoding='UTF-8') as file:
+            self.doc_l2index = json.load(file)
+
+    def name_trans(self, inst_list):
+        """
+        去除无用的字符，小写
+        :return:
+        """
+        inst_list_trans = []
+        for inst in inst_list:
+            inst_trans = self.pattern.sub('', inst)
+            inst_list_trans.append(inst_trans.lower().strip())
+        return list(set(inst_list_trans))
+
+    def get_author(self):
+        with open('../data/processed_file/relationship_dict_literature.json', 'r', encoding='utf-8') as file:
+            literature_dict = json.load(file)
+        index = 1
+
+        for doc, value in tqdm(literature_dict.items()):
+            if not value['institution']:
+                continue
+            inst_str = value['institution']
+            # 去除人名
+            inst_str = re.sub(self.pattern_remove_name, '', inst_str)
+            inst_list_temper = [inst[:inst.find(',')].strip() for inst in inst_str.split('; ')]
+            inst_list_temper = self.name_trans(inst_list_temper)
+            # 转换成label
+
+            if len(inst_list_temper) > 1:
+                # 作者在多个单位
+                authors_list_temper = re.findall(self.pattern_remove_name, value['institution'])
+                for authors, inst in zip(authors_list_temper, inst_list_temper):
+                    authors = authors.split('; ')
+                    for author in authors:
+                        author_inst = author + ' | ' + inst
+                        if author_inst not in self.author2index:
+                            self.author2index[author_inst] = index
+                            index += 1
+                        self.inst_author[self.inst2index[inst]].add(self.author2index[author_inst])
+                        self.doc_author[self.doc_l2index[doc]].add(self.author2index[author_inst])
             else:
-                inst_list_temper_trans.append(inst_label_dict[combine_dict[inst_trans]])
-    return inst_list_temper_trans
+                # 有author字段
+                authors = value["author"]
+                inst = inst_list_temper[0]
+                for author in authors:
+                    author_inst = author + ' | ' + inst
+                    if author_inst not in self.author2index:
+                        self.author2index[author_inst] = index
+                        index += 1
+                    self.inst_author[self.inst2index[inst]].add(self.author2index[author_inst])
+                    self.doc_author[self.doc_l2index[doc]].add(self.author2index[author_inst])
+        print('num of author:', len(self.author2index))
 
+    def save(self):
+        self.inst_author = dict((inst, list(author_set)) for inst, author_set in self.inst_author.items())
+        self.doc_author = dict((doc, list(author_set)) for doc, author_set in self.doc_author.items())
 
-def add_author(author_list, inst, text, index_inst_author_dict, index_text_author_dict, author_dict, label):
-    '''
-    :param author_list:
-    :param inst:
-    :param text:
-    :param index_inst_author_dict:
-    :param index_text_author_dict:
-    :param author_dict:
-    :param label:
-    :return:
-    '''
-
-    for author in author_list:
-        # 给每一个作者前面加一个inst
-        author = str(inst) + ' | ' + author
-        if author not in author_dict:
-            author_dict[author] = label
-            label += 1
-        index_inst_author_dict[inst].add(author_dict[author])
-        index_text_author_dict[text].add(author_dict[author])
-    return index_inst_author_dict, index_text_author_dict, author_dict, label
-
-
-def get_author():
-    with open('../../data/processed_file/relationship_dict_literature.json', 'r', encoding='utf-8') as file:
-        literature_dict = json.load(file)
-    # 处理过的机构名，用于替换
-    with open('../../data/middle_file/2.2.inst_trans_dict/institution_trans_dict_literature.json', 'r',
-              encoding='UTF-8') as file:
-        inst_trans_dict = json.load(file)
-    with open('../../data/middle_file/2.3.combine/combine_list-0709.json', 'r', encoding='UTF-8') as file:
-        combine_list = json.load(file)
-    combine_dict = get_combine_dict(combine_list)
-    with open('../../data/output/node/institution_label_dict.json', 'r', encoding='UTF-8') as file:
-        inst_label_dict = json.load(file)
-    with open('../../data/output/node/text_label_dict_literature.json', 'r', encoding='UTF-8') as file:
-        text_label_dict = json.load(file)
-
-    author_dict = dict()
-    label = 1
-    index_inst_author_dict = defaultdict(set)
-    index_text_author_dict = defaultdict(set)
-
-    pattern = re.compile(r"[\[](.*?)[\]]", re.S)
-
-    for key, value in tqdm(literature_dict.items()):
-        text = text_label_dict[key]
-        if not value['institution']:
-            continue
-        inst_list_temper = value['institution']
-        # 去除人名
-        inst_list_temper = re.sub(pattern, '', inst_list_temper)
-        inst_list_temper = [inst[:inst.index(',')].strip() for inst in inst_list_temper.split(';')]
-        # 转换成label
-        inst_list_temper = trans2label(inst_list_temper, inst_trans_dict, inst_label_dict, combine_dict)
-
-        if len(inst_list_temper) > 1:
-            authors_list = re.findall(pattern, value['institution'])
-            for authors, inst in zip(authors_list, inst_list_temper):
-                author_list = authors.split('; ')
-                index_inst_author_dict, index_text_author_dict, \
-                author_dict, label = add_author(author_list, inst, text, index_inst_author_dict, index_text_author_dict,
-                                                author_dict, label)
-
-        else:
-            # 有author字段
-            author_list = value["author"]
-            inst = inst_list_temper[0]
-            index_inst_author_dict, index_text_author_dict, \
-            author_dict, label = add_author(author_list, inst, text, index_inst_author_dict, index_text_author_dict,
-                                            author_dict, label)
-
-    for inst in index_inst_author_dict:
-        index_inst_author_dict[inst] = list(index_inst_author_dict[inst])
-    for text in index_text_author_dict:
-        index_text_author_dict[text] = list(index_text_author_dict[text])
-
-    with open('../../data/output/node/author_label_dict.json', 'w', encoding='UTF-8') as file:
-        json.dump(author_dict, file)
-    with open('../../data/middle_file/3.index/index_inst_author_dict.json', 'w', encoding='UTF-8') as file:
-        json.dump(index_inst_author_dict, file)
-    with open('../../data/middle_file/3.index/index_text_author_dict.json', 'w', encoding='UTF-8') as file:
-        json.dump(index_text_author_dict, file)
+        with open(self.index_save_path, 'w', encoding='UTF-8') as file:
+            json.dump(self.author2index, file)
+        with open(self.link_1_save_path, 'w', encoding='UTF-8') as file:
+            json.dump(self.inst_author, file)
+        with open(self.link_2_save_path, 'w', encoding='UTF-8') as file:
+            json.dump(self.doc_author, file)
 
 
 if __name__ == '__main__':
-    get_author()
+    index_save_path = '../data/output/node/author2index.json'
+    link_1_save_path = '../data/middle_file/3.index/inst_author_dict.json'
+    link_2_save_path = '../data/middle_file/3.index/doc_author_dict.json'
+    author = Author(index_save_path, link_1_save_path, link_2_save_path)
+    author.get_author()
+    author.save()

@@ -87,9 +87,8 @@ class Country:
                     index += 1
                 self.country_inst[self.country2index[country]].add(inst)
 
-        self.country_inst = [list(self.country_inst[_]) for _ in self.country_inst]
-
     def save(self):
+        self.country_inst = dict((country, list(inst_set)) for country, inst_set in self.country_inst.items())
         with open(self.index_save_path, 'w', encoding='UTF-8') as file:
             json.dump(self.country2index, file)
         with open(self.link_save_path, 'w', encoding='UTF-8') as file:
@@ -98,7 +97,7 @@ class Country:
 
 if __name__ == '__main__':
     index_save_path = '../data/output/node/country2index.json'
-    link_save_path = '../data/output/link/country_inst_dict.json'
+    link_save_path = '../data/middle_file/3.index/country_inst_dict.json'
     country = Country(index_save_path, link_save_path)
     country.get_country()
     country.save()
