@@ -30,35 +30,31 @@ def get_cooperation_author():
         csv_write.writerow([int(index) for index in link.split(' | ')] + [weight])
 
 
-def get_cooperation_inst():
-    link_file_path = '../data/middle_file/3.index/'
-    link_save_file_path = '../data/output/link/inst_cooperation.csv'
-
-    link_file_list = ['doc_literature_inst_dict.json',
-                      'doc_patent_inst_dict.json']
+def get_cooperation_inst(label):
+    link_file = '../data/middle_file/3.index/doc_' + label + '_inst_dict.json'
+    link_save_file = '../data/output/link/inst_cooperation_' + label + '.csv'
 
     link_dict = Counter()
+    with open(link_file, 'r', encoding='UTF-8') as file:
+        doc_inst = json.load(file)
 
-    for link_file in link_file_list:
-        print('processing---', link_file)
-        with open(os.path.join(link_file_path, link_file), 'r', encoding='UTF-8') as file:
-            doc_inst = json.load(file)
-
-        for _, inst_list in tqdm(doc_inst.items()):
-            if len(inst_list) < 2:
-                continue
-            inst_list = sorted(inst_list)
-            for i in range(0, len(inst_list) - 1):
-                for j in range(i + 1, len(inst_list)):
-                    link_dict[' | '.join([str(inst_list[i]), str(inst_list[j])])] += 1
+    for _, inst_list in tqdm(doc_inst.items()):
+        if len(inst_list) < 2:
+            continue
+        inst_list = sorted(inst_list)
+        for i in range(0, len(inst_list) - 1):
+            for j in range(i + 1, len(inst_list)):
+                link_dict[' | '.join([str(inst_list[i]), str(inst_list[j])])] += 1
 
     print('num of links:', len(link_dict))
     # 直接写csv，不写json了
-    csv_write = csv.writer(open(link_save_file_path, 'w', encoding='UTF-8', newline=''))
+    csv_write = csv.writer(open(link_save_file, 'w', encoding='UTF-8', newline=''))
     for link, weight in link_dict.items():
         csv_write.writerow([int(index) for index in link.split(' | ')] + [weight])
 
 
 if __name__ == '__main__':
     # get_cooperation_author()
-    get_cooperation_inst()
+    # label = 'literature'
+    label = 'patent'
+    get_cooperation_inst(label)

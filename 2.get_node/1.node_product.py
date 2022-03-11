@@ -79,7 +79,6 @@ class Product:
         print('num of exhibition:', len(self.exh2index))
         print('num of product:', len(self.product2index))
 
-
     def save(self):
         self.exh_inst = dict((exh, list(inst_set)) for exh, inst_set in self.exh_inst.items())
         self.inst_product = dict((inst, list(product_set)) for inst, product_set in self.inst_product.items())

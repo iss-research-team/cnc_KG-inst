@@ -39,8 +39,8 @@ def node_combine():
             if sim_2 > k_2:
                 combine_list_2.append([inst_1, inst_2])
 
-    link_path_1_json = '../data/middle_file/2.3.combine/combine_list_plus.json'
-    link_path_2_json = '../data/middle_file/2.3.combine/combine_list_equal.json'
+    link_path_1_json = '../data/middle_file/2.3.combine/combine_list_plus_0.95.json'
+    link_path_2_json = '../data/middle_file/2.3.combine/combine_list_equal_0.95.json'
 
     with open(link_path_1_json, 'w', encoding="UTF-8") as file:
         json.dump(combine_list_1, file)

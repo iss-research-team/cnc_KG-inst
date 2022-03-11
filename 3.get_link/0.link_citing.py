@@ -94,5 +94,6 @@ def get_citing(label):
 
 
 if __name__ == '__main__':
-    label = 'literature'
+    label = 'patent'
+    # label = 'literature'
     get_citing(label)

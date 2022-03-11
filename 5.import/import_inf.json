@@ -1,0 +1,95 @@
+{
+  "link_role_dict": {
+    "country_inst_dict.csv": [
+      "Country",
+      "Has",
+      "Inst"
+    ],
+    "doc_author_dict.csv": [
+      "Literature",
+      "Has",
+      "Author"
+    ],
+    "doc_literature_inst_dict.csv": [
+      "Literature",
+      "BelongTo",
+      "Inst"
+    ],
+    "doc_patent_inst_dict.csv": [
+      "Patent",
+      "BelongTo",
+      "Inst"
+    ],
+    "exh_inst_dict.csv": [
+      "Exhibition",
+      "Has",
+      "Inst"
+    ],
+    "inst_author_dict.csv": [
+      "Inst",
+      "Has",
+      "Author"
+    ],
+    "inst_product_dict.csv": [
+      "Inst",
+      "Has",
+      "Product"
+    ],
+    "journal_doc_dict.csv": [
+      "Journal",
+      "Has",
+      "Literature"
+    ],
+    "link_inst_re.csv": [
+      "Inst",
+      "Compete",
+      "Inst"
+    ],
+    "link_inst_supply.csv": [
+      "Inst",
+      "Supply",
+      "Inst"
+    ],
+    "doc_citing_literature.csv": [
+      "Literature",
+      "Cite_Literature",
+      "Literature"
+    ],
+    "doc_citing_patent.csv": [
+      "Patent",
+      "Cite_Patent",
+      "Patent"
+    ]
+  },
+  "link_role_weight_dict": {
+    "inst_citing_literature.csv": [
+      "Inst",
+      "Cite_Literature",
+      "Inst"
+    ],
+    "inst_citing_patent.csv": [
+      "Inst",
+      "Cite_Patent",
+      "Inst"
+    ],
+    "inst_cooperation_literature.csv": [
+      "Inst",
+      "Has",
+      "Inst"
+    ],
+    "inst_cooperation_patent.csv": [
+      "Inst",
+      "Has",
+      "Inst"
+    ]
+  },
+  "node_class_dict": {
+    "author2index.json": "Author",
+    "country2index.json": "Country",
+    "doc_literature2index.json": "Literature",
+    "doc_patent2index.json": "Patent",
+    "exhibition2index.json": "Exhibition",
+    "journal2index.json": "Journal",
+    "product2index.json": "Product"
+  }
+}

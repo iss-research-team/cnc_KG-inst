@@ -87,7 +87,8 @@ class Country:
             # 转换成label
             inst_list_temper = self.trans2label(inst_list_temper)
             # 国家清单
-            country_list_temper = [inst[inst.rfind(',') + 1:].strip() for inst in value['institution'].split('; ')]
+            inst_str = re.sub(self.pattern_remove_name, '', value['institution'])
+            country_list_temper = [inst[inst.rfind(',') + 1:].strip() for inst in inst_str.split('; ')]
 
             for country, inst in zip(country_list_temper, inst_list_temper):
                 country = deal(country)
@@ -95,6 +96,8 @@ class Country:
                     self.country2index[country] = index
                     index += 1
                 self.country_inst[self.country2index[country]].add(inst)
+
+        print('num of country:', len(self.country2index))
 
     def save(self):
         self.country_inst = dict((country, list(inst_set)) for country, inst_set in self.country_inst.items())

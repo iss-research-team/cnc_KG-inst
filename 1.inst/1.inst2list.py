@@ -70,7 +70,7 @@ class Inst:
         :return:
         """
         # 为有人名的机构准备的正则表达式
-        pattern = re.compile(r"\[(.*?)\]", re.S)
+        pattern = re.compile(r"\[(.*?)]", re.S)
         # 读文件
         relationship_dict = json.load(open('../data/processed_file/relationship_dict_' + label + '.json'
                                            , 'r', encoding='UTF-8'))

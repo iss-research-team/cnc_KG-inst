@@ -104,7 +104,7 @@ class Doc:
 
             for inst in inst_list_temper:
                 self.doc_inst[self.doc2index[doc]].add(inst)
-        print('num of literature:', len(self.doc2index))
+        print('num of ' + label + ':', len(self.doc2index))
 
     def save(self):
         self.doc_inst = dict((doc, list(inst_set)) for doc, inst_set in self.doc_inst.items())
@@ -116,7 +116,8 @@ class Doc:
 
 
 if __name__ == '__main__':
-    label = 'patent'
+    # label = 'patent'
+    label = 'literature'
     index_save_path = '../data/output/node/doc_' + label + '2index.json'
     link_save_path = '../data/middle_file/3.index/doc_' + label + '_inst_dict.json'
     doc = Doc(label, index_save_path, link_save_path)

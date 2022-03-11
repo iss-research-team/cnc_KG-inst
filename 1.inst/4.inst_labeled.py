@@ -26,8 +26,8 @@ def inst_match():
     inst_graph.add_nodes_from(inst_list)
 
     combine_list_patent_path = '../data/middle_file/2.0.inst_index_patent/combine_list_patent.json'
-    combine_list_1_path = '../data/middle_file/2.3.combine/combine_list_equal.json'
-    combine_list_2_path = '../data/middle_file/2.3.combine/combine_list_equal.json'
+    combine_list_1_path = '../data/middle_file/2.3.combine/combine_list_equal_0.9.json'
+    combine_list_2_path = '../data/middle_file/2.3.combine/combine_list_equal_0.9.json'
 
     with open(combine_list_patent_path, 'r', encoding='UTF-8') as file:
         combine_list_patent = json.load(file)
