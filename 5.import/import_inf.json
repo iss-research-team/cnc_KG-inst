@@ -74,12 +74,12 @@
     ],
     "inst_cooperation_literature.csv": [
       "Inst",
-      "Has",
+      "Cooperation_Literature",
       "Inst"
     ],
     "inst_cooperation_patent.csv": [
       "Inst",
-      "Has",
+      "Cooperation_Patent",
       "Inst"
     ]
   },

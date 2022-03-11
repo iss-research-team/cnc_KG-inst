@@ -18,7 +18,7 @@ def find_inst(inst_list):
 
 def node_trans_inst():
     node_path = '../data/middle_file/2.4.inst_index/index2inst.json'
-    node_save_path = '../data/output/import/inst2index.csv'
+    node_save_path = '../data/output/import/node/inst2index.csv'
     print('processing--- index2inst.json')
 
     with open(node_path, 'r', encoding='UTF-8') as file:
@@ -39,7 +39,7 @@ def node_trans_inst():
 
 def node_trans(node_class_dict):
     node_path = '../data/output/node'
-    node_save_path = '../data/output/import'
+    node_save_path = '../data/output/import/node'
 
     for node_file, node_class in node_class_dict.items():
         print('processing---', node_file)
@@ -56,7 +56,7 @@ def node_trans(node_class_dict):
 
 def link_trans(link_role_dict):
     link_path = '../data/output/link'
-    link_save_path = '../data/output/import'
+    link_save_path = '../data/output/import/link'
 
     for link_file, link_role in link_role_dict.items():
         print('processing---', link_file)
@@ -73,7 +73,7 @@ def link_trans(link_role_dict):
 
 def link_weight_trans(link_role_dict):
     link_path = '../data/output/link'
-    link_save_path = '../data/output/import'
+    link_save_path = '../data/output/import/link'
 
     for link_file, link_role in link_role_dict.items():
         print('processing---', link_file)
