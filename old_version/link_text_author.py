@@ -21,6 +21,5 @@ def get_link_hold():
             csv_write.writerow([int(text), institution])
 
 
-
 if __name__ == '__main__':
     get_link_hold()

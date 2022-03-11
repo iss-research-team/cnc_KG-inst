@@ -52,7 +52,7 @@ def get_text_inst_dict():
     with open('../../data/processed_file/relationship_dict_' + label + '.json', 'r', encoding='UTF-8') as file:
         relationship_dict = json.load(file)
     # trans_dict
-    with open('../../data/middle_file/2.2.institution_trans_dict/institution_trans_dict_' + label + '.json', 'r',
+    with open('../../data/middle_file/2.2.inst_trans_dict/institution_trans_dict_' + label + '.json', 'r',
               encoding='UTF-8') as file:
         inst_trans_dict = json.load(file)
     with open('../../data/middle_file/2.3.combine/combine_list-0709.json', 'r', encoding='UTF-8') as file:
@@ -61,13 +61,13 @@ def get_text_inst_dict():
     with open('../../data/output/node/institution_label_dict.json', 'r', encoding='UTF-8') as file:
         inst_label_dict = json.load(file)
 
-    with open('../../data/output/node/text_label_dict_' + label + '.json', 'r', encoding='UTF-8')as file:
+    with open('../../data/output/node/text_label_dict_' + label + '.json', 'r', encoding='UTF-8') as file:
         text_label_dict = json.load(file)
 
     index_text_inst_dict = dict()
 
     # 为有人名的机构准备的正则表达式
-    pattern = re.compile(r"[\[](.*?)[\]]", re.S)
+    pattern = re.compile(r"[\[](.*?)[]]", re.S)
 
     for each_record in relationship_dict:
         if not relationship_dict[each_record]['institution']:
@@ -90,8 +90,7 @@ def get_text_inst_dict():
 
         index_text_inst_dict[text_label_dict[each_record]] = {'institution': inst_list_temper, 'time': time}
 
-    with open('../../data/middle_file/3.index/index_text_inst_' + label + '.json', 'w',
-              encoding='UTF-8') as file:
+    with open('../../data/middle_file/3.index/index_text_inst_' + label + '.json', 'w', encoding='UTF-8') as file:
         json.dump(index_text_inst_dict, file)
 
 

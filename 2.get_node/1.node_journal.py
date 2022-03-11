@@ -37,7 +37,7 @@ class Journal:
     def get_journal(self):
         with open('../data/processed_file/relationship_dict_literature.json', 'r', encoding='utf-8') as file:
             literature_dict = json.load(file)
-        index = 1
+        index = 0
         pattern = re.compile(r"[(](.*?)[)]", re.S)
 
         for key, value in tqdm(literature_dict.items()):

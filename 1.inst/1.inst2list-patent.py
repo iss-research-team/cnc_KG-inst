@@ -166,6 +166,7 @@ class Inst4Patent:
             # 去除发明人
             inst_list_clean_1, inst_list_clean_2 = self.sub_author(inst_inf, author_inf)
             if len(inst_list_clean_1) <= 1:
+                self.rest_collect.append([inst_list_clean_1, inst_list_clean_2])
                 continue
             # 第二次捞取
             inst_list_clean_1, inst_list_clean_2 = self.second_inst_remove(inst_list_clean_1, inst_list_clean_2)

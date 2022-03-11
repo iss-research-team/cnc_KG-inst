@@ -60,25 +60,34 @@ class Country:
         :param inst_list_temper:
         :return:
         """
-        inst_list_temper = self.name_trans(inst_list_temper)
-        return [self.inst2index[inst] for inst in inst_list_temper]
+        return [self.inst2index[inst] for inst in inst_list_temper if inst in self.inst2index]
+
+    def get_inst_list_literature(self, inst_str):
+        """
+        :param inst_inf:
+        :param author_inf:
+        :return:
+        """
+        # 去除人名
+        inst_str = re.sub(self.pattern_remove_name, '', inst_str)
+        inst_list_temper = [inst[:inst.find(',')].strip() for inst in inst_str.split('; ')]
+        inst_list_temper = list(filter(not_empty, inst_list_temper))
+        return self.name_trans(inst_list_temper)
 
     def get_country(self):
         with open('../data/processed_file/relationship_dict_literature.json', 'r', encoding='utf-8') as file:
             literature_dict = json.load(file)
         # 处理过的机构名，用于替换
-        index = 1
+        index = 0
 
         for key, value in tqdm(literature_dict.items()):
             if not value['institution']:
                 continue
-            inst_str = value['institution']
-            # 去除人名
-            inst_str = re.sub(self.pattern_remove_name, '', inst_str)
-            country_list_temper = [inst[inst.rfind(',') + 1:].strip() for inst in inst_str.split('; ')]
-            inst_list_temper = [inst[:inst.find(',')].strip() for inst in inst_str.split('; ')]
+            inst_list_temper = self.get_inst_list_literature(value['institution'])
             # 转换成label
             inst_list_temper = self.trans2label(inst_list_temper)
+            # 国家清单
+            country_list_temper = [inst[inst.rfind(',') + 1:].strip() for inst in value['institution'].split('; ')]
 
             for country, inst in zip(country_list_temper, inst_list_temper):
                 country = deal(country)

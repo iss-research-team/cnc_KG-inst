@@ -48,7 +48,7 @@ class Product:
         return inst_trans.lower().strip()
 
     def get_product(self):
-        index = 1
+        index = 0
         key_dict = {'cimt_2019': ['cimt_2019.json', '公司英文名称', '展品名称(en)'],
                     'cimt_2021': ['cimt_2021.json', '公司英文名称', '展品名称(en)'],
                     'emo_2019': ['product_emo_2019.json', 'exhibitor', 'product']}

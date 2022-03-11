@@ -7,6 +7,10 @@ from collections import defaultdict
 from tqdm import tqdm
 
 
+def not_empty(s):
+    return s and s.strip()
+
+
 def get_inst_p(str_list):
     str_len_list = [len(each_str) for each_str in str_list]
     return str_list[str_len_list.index(max(str_len_list))]
@@ -66,20 +70,27 @@ class Author:
             inst_list_trans.append(inst_trans.lower().strip())
         return list(set(inst_list_trans))
 
+    def get_inst_list_literature(self, inst_str):
+        """
+        :param inst_inf:
+        :param author_inf:
+        :return:
+        """
+        # 去除人名
+        inst_str = re.sub(self.pattern_remove_name, '', inst_str)
+        inst_list_temper = [inst[:inst.find(',')].strip() for inst in inst_str.split('; ')]
+        inst_list_temper = list(filter(not_empty, inst_list_temper))
+        return self.name_trans(inst_list_temper)
+
     def get_author(self):
         with open('../data/processed_file/relationship_dict_literature.json', 'r', encoding='utf-8') as file:
             literature_dict = json.load(file)
-        index = 1
+        index = 0
 
         for doc, value in tqdm(literature_dict.items()):
             if not value['institution']:
                 continue
-            inst_str = value['institution']
-            # 去除人名
-            inst_str = re.sub(self.pattern_remove_name, '', inst_str)
-            inst_list_temper = [inst[:inst.find(',')].strip() for inst in inst_str.split('; ')]
-            inst_list_temper = self.name_trans(inst_list_temper)
-            # 转换成label
+            inst_list_temper = self.get_inst_list_literature(value['institution'])
 
             if len(inst_list_temper) > 1:
                 # 作者在多个单位
