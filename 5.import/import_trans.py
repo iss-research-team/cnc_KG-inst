@@ -19,6 +19,7 @@ def find_inst(inst_list):
 def node_trans_inst():
     node_path = '../data/middle_file/2.4.inst_index/index2inst.json'
     node_save_path = '../data/output/import/node/inst2index.csv'
+    count = 0
     print('processing--- index2inst.json')
 
     with open(node_path, 'r', encoding='UTF-8') as file:
@@ -35,6 +36,8 @@ def node_trans_inst():
             inst, other_name = find_inst(inst_list)
 
         csv_write.writerow(['Inst_' + index, inst, other_name, 'Inst'])
+        count += 1
+    print('num:', count)
 
 
 def node_trans(node_class_dict):
@@ -43,7 +46,7 @@ def node_trans(node_class_dict):
 
     for node_file, node_class in node_class_dict.items():
         print('processing---', node_file)
-
+        count = 0
         with open(os.path.join(node_path, node_file), 'r', encoding='UTF-8') as file:
             node2index = json.load(file)
         csv_write = csv.writer(open(os.path.join(node_save_path, node_file.replace('json', 'csv')),
@@ -52,6 +55,8 @@ def node_trans(node_class_dict):
         csv_write.writerow(head)
         for node, index in node2index.items():
             csv_write.writerow([node_class + '_' + str(index), node, node_class])
+            count += 1
+        print('num:', count)
 
 
 def link_trans(link_role_dict):
@@ -60,7 +65,7 @@ def link_trans(link_role_dict):
 
     for link_file, link_role in link_role_dict.items():
         print('processing---', link_file)
-
+        count = 0
         csv_read = csv.reader(open(os.path.join(link_path, link_file), 'r', encoding='UTF-8'))
         csv_write = csv.writer(open(os.path.join(link_save_path, link_file), 'w', encoding='UTF-8'))
 
@@ -69,6 +74,8 @@ def link_trans(link_role_dict):
 
         for source, target in csv_read:
             csv_write.writerow([link_role[0] + '_' + source, link_role[2] + '_' + target, '_'.join(link_role)])
+            count += 1
+        print('num:', count)
 
 
 def link_weight_trans(link_role_dict):
@@ -77,6 +84,7 @@ def link_weight_trans(link_role_dict):
 
     for link_file, link_role in link_role_dict.items():
         print('processing---', link_file)
+        count = 0
 
         csv_read = csv.reader(open(os.path.join(link_path, link_file), 'r', encoding='UTF-8'))
         csv_write = csv.writer(open(os.path.join(link_save_path, link_file), 'w', encoding='UTF-8'))
@@ -86,6 +94,8 @@ def link_weight_trans(link_role_dict):
 
         for source, target, weight in csv_read:
             csv_write.writerow([link_role[0] + '_' + source, weight, link_role[2] + '_' + target, '_'.join(link_role)])
+            count += 1
+        print('num:', count)
 
 
 if __name__ == '__main__':

@@ -20,6 +20,16 @@
       "BelongTo",
       "Inst"
     ],
+    "doc_literature_keyword_dict.csv": [
+      "Literature",
+      "Include",
+      "Tech_entity"
+    ],
+    "doc_patent_keyword_dict.csv": [
+      "Patent",
+      "Include",
+      "Tech_entity"
+    ],
     "exh_inst_dict.csv": [
       "Exhibition",
       "Has",
@@ -90,6 +100,7 @@
     "doc_patent2index.json": "Patent",
     "exhibition2index.json": "Exhibition",
     "journal2index.json": "Journal",
-    "product2index.json": "Product"
+    "product2index.json": "Product",
+    "keyword2index_final.json": "Tech_entity"
   }
 }
