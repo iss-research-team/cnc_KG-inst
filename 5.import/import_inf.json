@@ -69,6 +69,16 @@
       "Patent",
       "Cite_Patent",
       "Patent"
+    ],
+    "ipc_doc_dict.csv": [
+      "IPC",
+      "Has",
+      "Patent"
+    ],
+    "ipc_tree_dict.csv": [
+      "IPC",
+      "Contain",
+      "IPC"
     ]
   },
   "link_role_weight_dict": {
@@ -101,6 +111,7 @@
     "exhibition2index.json": "Exhibition",
     "journal2index.json": "Journal",
     "product2index.json": "Product",
-    "keyword2index_final.json": "Tech_entity"
+    "keyword2index_final.json": "Tech_entity",
+    "ipc2index.json": "IPC"
   }
 }

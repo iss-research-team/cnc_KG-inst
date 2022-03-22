@@ -100,7 +100,11 @@ class Country:
         print('num of country:', len(self.country2index))
 
     def save(self):
-        self.country_inst = dict((country, list(inst_set)) for country, inst_set in self.country_inst.items())
+        def set2list(inf_dict):
+            return dict((key, list(value_set)) for key, value_set in inf_dict.items())
+
+        self.country_inst = set2list(self.country_inst)
+
         with open(self.index_save_path, 'w', encoding='UTF-8') as file:
             json.dump(self.country2index, file)
         with open(self.link_save_path, 'w', encoding='UTF-8') as file:

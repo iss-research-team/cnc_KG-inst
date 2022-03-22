@@ -52,7 +52,10 @@ class Journal:
         print('num of journal:', len(self.journal2index))
 
     def save(self):
-        self.journal_doc = dict((journal, list(doc_set)) for journal, doc_set in self.journal_doc.items())
+        def set2list(inf_dict):
+            return dict((key, list(value_set)) for key, value_set in inf_dict.items())
+
+        self.journal_doc = set2list(self.journal_doc)
 
         with open(self.index_save_path, 'w', encoding='UTF-8') as file:
             json.dump(self.journal2index, file)

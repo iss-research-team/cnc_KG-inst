@@ -118,8 +118,11 @@ class Author:
         print('num of author:', len(self.author2index))
 
     def save(self):
-        self.inst_author = dict((inst, list(author_set)) for inst, author_set in self.inst_author.items())
-        self.doc_author = dict((doc, list(author_set)) for doc, author_set in self.doc_author.items())
+        def set2list(inf_dict):
+            return dict((key, list(value_set)) for key, value_set in inf_dict.items())
+
+        self.inst_author = set2list(self.inst_author)
+        self.doc_author = set2list(self.doc_author)
 
         with open(self.index_save_path, 'w', encoding='UTF-8') as file:
             json.dump(self.author2index, file)

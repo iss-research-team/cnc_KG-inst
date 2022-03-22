@@ -80,8 +80,11 @@ class Product:
         print('num of product:', len(self.product2index))
 
     def save(self):
-        self.exh_inst = dict((exh, list(inst_set)) for exh, inst_set in self.exh_inst.items())
-        self.inst_product = dict((inst, list(product_set)) for inst, product_set in self.inst_product.items())
+        def set2list(inf_dict):
+            return dict((key, list(value_set)) for key, value_set in inf_dict.items())
+
+        self.exh_inst = set2list(self.exh_inst)
+        self.inst_product = set2list(self.inst_product)
 
         with open(self.index_1_save_path, 'w', encoding='UTF-8') as file:
             json.dump(self.product2index, file)

@@ -107,7 +107,10 @@ class Doc:
         print('num of ' + label + ':', len(self.doc2index))
 
     def save(self):
-        self.doc_inst = dict((doc, list(inst_set)) for doc, inst_set in self.doc_inst.items())
+        def set2list(inf_dict):
+            return dict((key, list(value_set)) for key, value_set in inf_dict.items())
+
+        self.doc_inst = set2list(self.doc_inst)
 
         with open(self.index_save_path, 'w', encoding='UTF-8') as file:
             json.dump(self.doc2index, file)
