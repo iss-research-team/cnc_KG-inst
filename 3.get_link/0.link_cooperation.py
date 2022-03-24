@@ -8,7 +8,7 @@ from collections import Counter
 
 
 def get_cooperation_author():
-    link_file_path = '../data/middle_file/3.index/doc_author_dict.json'
+    link_file_path = '../data/middle_file/3.index/doc_literature_author_dict.json'
     link_save_file_path = '../data/output/link/author_cooperation.csv'
 
     with open(link_file_path, 'r', encoding='UTF-8') as file:

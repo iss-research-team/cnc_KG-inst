@@ -37,9 +37,8 @@ def get_citing(label):
 
     for key, value in tqdm(relationship_dict.items()):
         citing_index_list = set()
+        # 论文
         if label == 'literature' and value['citing']:
-            if not value['citing']:
-                continue
             citing_inf_list = value['citing'].split(';')
             for citing_inf in citing_inf_list:
                 di = citing_inf.split(',')[-1]
@@ -47,28 +46,28 @@ def get_citing(label):
                     di = di.strip().split()[-1]
                     if di in di_dict:
                         citing_index_list.add(di_dict[di])
+        # 专利
         if label == 'patent' and value['citing_patent']:
-            if not value['citing_patent']:
-                continue
             citing_inf = value['citing_patent'].split(' | ')
             citing_list_temper = [citing_inf[i * 9 + 1] for i in range(int(len(citing_inf) / 9))]
             citing_list_temper = list(filter(not_empty, citing_list_temper))
             for citing in citing_list_temper:
                 if citing in doc2index:
                     citing_index_list.add(doc2index[citing])
-        citing_index_list = sorted(list(citing_index_list))
         if citing_index_list:
             doc_citing_dict[doc2index[key]] = citing_index_list
 
     print('index completed!')
 
-    csv_write_path = '../data/output/link/doc_citing_' + label + '.csv'
-    csv_write = csv.writer(open(csv_write_path, 'w', encoding='UTF-8', newline=''))
-    # 合并提权重
-    for source, target_list in tqdm(doc_citing_dict.items()):
-        for target in target_list:
-            csv_write.writerow([source, target])
+    def set2list(inf_dict):
+        return dict((key, list(value_set)) for key, value_set in inf_dict.items())
 
+    doc_citing_dict = set2list(doc_citing_dict)
+
+    with open('../data/middle_file/3.index/doc_citing_' + label + '.json', 'w', encoding='UTF-8') as file:
+        json.dump(doc_citing_dict, file)
+
+    # 开始处理机构引用
     link_inst_dict = Counter()
     # 合并提权重
     for source, target_list in tqdm(doc_citing_dict.items()):
@@ -94,6 +93,6 @@ def get_citing(label):
 
 
 if __name__ == '__main__':
-    label = 'patent'
-    # label = 'literature'
+    # label = 'patent'
+    label = 'literature'
     get_citing(label)

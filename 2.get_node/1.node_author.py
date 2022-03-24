@@ -135,7 +135,7 @@ class Author:
 if __name__ == '__main__':
     index_save_path = '../data/output/node/author2index.json'
     link_1_save_path = '../data/middle_file/3.index/inst_author_dict.json'
-    link_2_save_path = '../data/middle_file/3.index/doc_author_dict.json'
+    link_2_save_path = '../data/middle_file/3.index/doc_literature_author_dict.json'
     author = Author(index_save_path, link_1_save_path, link_2_save_path)
     author.get_author()
     author.save()

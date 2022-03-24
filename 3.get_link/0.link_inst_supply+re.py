@@ -2,6 +2,7 @@
 import json
 import csv
 import re
+from collections import defaultdict
 
 
 def name_trans(inst_list):
@@ -32,6 +33,8 @@ def get_supply():
         inst2index = json.load(file)
 
     link_list = []
+    # 这为了后续的分析做准备
+    inst_supply_dict = defaultdict(set)
     # 读文件
     file_path_dict = {'../data/input/supply_chain/company_link_1.json': 0,
                       '../data/input/supply_chain/company_link_3.json': 1}
@@ -50,14 +53,21 @@ def get_supply():
                 link = [node_dict[link['source']], node_dict[link['target']]]
             else:
                 link = [node_dict[link['target']], node_dict[link['source']]]
-
             link_list.append(link)
+            inst_supply_dict[link[0]].add(link[1])
 
     # 这个地方为去重服务
     # 这里需要考虑的是加权重是否有意义
     # 目前来看权重是没有意义的
     link_list = [' | '.join([str(link[0]), str(link[1])]) for link in link_list]
     link_list = sorted(list(set(link_list)))
+
+    def set2list(inf_dict):
+        return dict((key, list(value_set)) for key, value_set in inf_dict.items())
+
+    inst_supply_dict = set2list(inst_supply_dict)
+    with open('../data/middle_file/3.index/inst_supply_dict.json', 'w', encoding='UTF-8') as file:
+        json.dump(inst_supply_dict, file)
 
     # 直接写csv，不写json了。
     csv_write_path = '../data/output/link/link_inst_supply.csv'
